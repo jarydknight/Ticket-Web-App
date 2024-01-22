@@ -10,6 +10,17 @@ const userController = {
         .catch(err => {
             res.json(err)
         })
+    },
+    
+    getAllUsers(req, res) {
+        User.find({})
+        .then(dbData => {
+            res.json(dbData)
+        })
+        .catch(err => {
+            console.log(err);
+            res.sendStatus(400);
+        })
     }
 }
 

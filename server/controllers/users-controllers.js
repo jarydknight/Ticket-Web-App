@@ -21,6 +21,16 @@ const userController = {
             console.log(err);
             res.sendStatus(400);
         })
+    },
+
+    getUserById({params}, res) {
+        User.findById(params.id)
+        .then(dbData => {
+            res.json(dbData)
+        })
+        .catch(err => {
+            res.sendStatus(400)
+        });
     }
 }
 

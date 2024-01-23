@@ -1,6 +1,6 @@
 const {Schema, model} = require("mongoose");
 
-// User schemas
+// User schema
 const UserSchema = new Schema(
     {
         userName: {
@@ -15,6 +15,13 @@ const UserSchema = new Schema(
             required: true,
             unique: true,
             match: [/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/]
+        },
+        location: {
+            type: String,
+            required: true
+        },
+        position: {
+            type: String
         },
         createdAt: {
             type: Date,

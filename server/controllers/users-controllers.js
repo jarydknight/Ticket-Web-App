@@ -2,6 +2,7 @@ const User = require("../models/user");
 
 // User controller object
 const userController = {
+    // Create new User
     createNewUser({ body }, res) {
         User.create(body)
         .then(dbData => {
@@ -12,6 +13,7 @@ const userController = {
         })
     },
     
+    // Get all users
     getAllUsers(req, res) {
         User.find({})
         .then(dbData => {
@@ -23,6 +25,7 @@ const userController = {
         })
     },
 
+    // Get user by ID
     getUserById({params}, res) {
         User.findById(params.id)
         .then(dbData => {
@@ -31,6 +34,21 @@ const userController = {
         .catch(err => {
             res.sendStatus(400)
         });
+    },
+
+    // Delete user by ID
+    deleteUserByID({params}, res) {
+        User.findOneAndDelete(params.id)
+        .then(dbData => {
+            if (!dbData) {
+                res.status(404).json({message: 'User not fonud'})
+                return;
+            }
+            res.json(dbData)
+        })
+        .catch(err => {
+            res.json(err)
+        })
     }
 }
 

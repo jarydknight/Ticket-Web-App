@@ -1,7 +1,7 @@
 const {Schema, model, Types} = require("mongoose");
 
 // Ticket Schema
-
+// TODO: GET USER TO POPULATE WHEN TICKET GET REQUEST MADE
 const ticketSchema = new Schema(
     {
         ticketNumber: {
@@ -9,11 +9,11 @@ const ticketSchema = new Schema(
         required: true
         },
         user:
-        {
-        type: Schema.Types.ObjectId,
-        ref: 'User',
-        required: true
-        },
+            {
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+            required: true
+            },
         details: {
             type: String,
             required: true,

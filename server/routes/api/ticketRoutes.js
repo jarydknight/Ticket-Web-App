@@ -1,11 +1,9 @@
-const { createNewTicket } = require("../../controllers/ticket-controller");
+const { createNewTicket, getAllTickets } = require("../../controllers/ticket-controller");
 
 const router = require("express").Router();
 
 router.route('/')
-.get((req, res) => {
-    res.send({ticket: "Ticket info"})
-})
+.get(getAllTickets)
 .post(createNewTicket)
 
 module.exports = router;

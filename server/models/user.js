@@ -1,4 +1,5 @@
 const {Schema, model} = require("mongoose");
+const Ticket = require("./ticket");
 
 // User schema
 const UserSchema = new Schema(
@@ -22,6 +23,54 @@ const UserSchema = new Schema(
         },
         position: {
             type: String
+        },
+        userTickets: {
+            openTickets: [
+                {
+                type: Schema.Types.ObjectId,
+                ref: 'Ticket'
+                }
+            ],
+            closedTicket: [
+                {
+                type: Schema.Types.ObjectId,
+                ref: 'Ticket'
+                }
+            ]
+        },
+        adminTickets: {
+            openTickets: [
+                {
+                    type: Schema.Types.ObjectId,
+                    ref: 'Ticket'
+                }
+            ],
+            closedTickets: [
+                {
+                    type: Schema.Types.ObjectId,
+                    ref: 'Ticket'
+                }
+            ]
+        },
+        Roles: {
+            user: [
+                {
+                    type: Schema.Types.ObjectId,
+                    ref: 'ticketBucket'
+                }
+            ],
+            l1Admin: [
+                {
+                    type: Schema.Types.ObjectId,
+                    ref: 'ticketBucket'
+                }
+            ],
+            l2Admin: [
+                {
+                    type: Schema.Types.ObjectId,
+                    ref: 'ticketBucket'
+                }
+            ]
         },
         createdAt: {
             type: Date,

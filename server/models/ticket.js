@@ -21,6 +21,11 @@ const ticketSchema = new Schema(
         createdAt: {
             type: Date,
             default: Date.now
+        },
+        bucket: {
+            type: Schema.Types.ObjectId,
+            ref: 'ticketBucket',
+            required: true
         }
     }
 );

@@ -6,7 +6,7 @@ const ticketCommentRoutes = require("./ticketCommentRoutes");
 
 router.use('/users', userRoutes);
 router.use('/tickets', ticketRoutes);
-router.use('/comment', ticketCommentRoutes);
+router.use('/bucket', ticketBucketRoutes);
 router.use('/comment', ticketCommentRoutes);
 
 module.exports = router;

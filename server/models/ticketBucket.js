@@ -3,7 +3,7 @@ const { Schema, model } = require("mongoose");
 // ticketComment Schema
 const TicketBucketSchema = new Schema(
     {
-        queueName: {
+        bucketName: {
             type: String,
             required: true,
         },

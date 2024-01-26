@@ -1,4 +1,4 @@
-const {Schema, model, Types} = require("mongoose");
+const { Schema, model } = require("mongoose");
 
 // Ticket Schema
 // TODO: GET USER TO POPULATE WHEN TICKET GET REQUEST MADE
@@ -14,9 +14,13 @@ const ticketSchema = new Schema(
             ref: 'User',
             required: true
             },
-        details: {
+        ticketDetails: {
             type: String,
             required: true,
+        },
+        ticketComments: {
+            type: [Schema.Types.ObjectId],
+            ref: 'ticketComments'
         },
         createdAt: {
             type: Date,

@@ -20,7 +20,6 @@ const userController = {
             res.json(dbData)
         })
         .catch(err => {
-            console.log(err);
             res.sendStatus(400);
         })
     },

@@ -20,7 +20,7 @@ const ticketSchema = new Schema(
         },
         ticketComments: {
             type: [Schema.Types.ObjectId],
-            ref: 'ticketComments'
+            ref: 'TicketComments'
         },
         createdAt: {
             type: Date,
@@ -28,7 +28,7 @@ const ticketSchema = new Schema(
         },
         bucket: {
             type: Schema.Types.ObjectId,
-            ref: 'ticketBucket',
+            ref: 'TicketBucket',
             required: true
         }
     }

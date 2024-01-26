@@ -3,7 +3,7 @@ const TicketBucket = require("../models/ticketBucket");
 // ticketBucker Controller object
 const ticketBucketController = {
     // Create new Ticket Bucket
-    createNewBucket({body}, res) {
+    createNewTicketBucket({body}, res) {
         TicketBucket.create(body)
         .then(dbData => {
             res.json(dbData)
@@ -14,7 +14,7 @@ const ticketBucketController = {
     },
 
     // Find ticket Bucket by ID
-    getBucketById({params}, res) {
+    getTicketBucketById({params}, res) {
         TicketBucket.findById(params.id)
         .then(dbData => {
             res.json(dbData)
@@ -25,7 +25,7 @@ const ticketBucketController = {
     },
 
     // Delete Ticket Bucket by ID
-    deleteBucketById({params}, res) {
+    deleteTicketBucketById({params}, res) {
         TicketBucket.findOneAndDelete(params.id)
         .then(dbData => {
             if (!dbData) {

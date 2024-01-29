@@ -3,8 +3,8 @@ const User = require("../models/user");
 // User controller object
 const userController = {
     // Create new User
-    createNewUser({ body }, res) {
-        User.create(body)
+    async createNewUser({ body }, res) {
+        await User.create(body)
         .then(dbData => {
             res.json(dbData)
         })

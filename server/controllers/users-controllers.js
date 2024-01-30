@@ -2,17 +2,6 @@ const User = require("../models/user");
 
 // User controller object
 const userController = {
-    // Create new User
-    async createNewUser({ body }, res) {
-        await User.create(body)
-        .then(dbData => {
-            res.json(dbData)
-        })
-        .catch(err => {
-            res.json(err)
-        })
-    },
-    
     // Get all users
     getAllUsers(req, res) {
         User.find({})

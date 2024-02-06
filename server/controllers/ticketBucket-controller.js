@@ -1,15 +1,14 @@
 const TicketBucket = require("../models/ticketBucket");
+const addUserPermissions = require("../utils/manageUserPermission");
 
 // ticketBucker Controller object
 const ticketBucketController = {
     // Create new Ticket Bucket
     createNewTicketBucket({body}, res) {
         TicketBucket.create(body)
-        .then(dbData => {
-            res.json(dbData)
-        })
-        .catch(err => {
-            res.jspn(err)
+        .then((dbData) => {
+            addUserPermissions(body.userId, "l1Admin", dbData._id)
+            res.json({"message": "Ticket Bucket successfully created"})
         })
     },
 

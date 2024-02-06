@@ -24,7 +24,7 @@ const loginController = {
 
         res.cookie("token", token, {
             withCredentials: true,
-            httpOnly: false
+            httpOnly: true
         })
         res.status(201)
         .json({message: "User logged in succesfully"})

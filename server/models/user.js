@@ -27,38 +27,38 @@ const UserSchema = new Schema(
             type: String
         },
         userTickets: {
-            openTickets: {
-                type: [Schema.Types.ObjectId],
+            openTickets: [{
+                type: Schema.Types.ObjectId,
                 ref: 'Ticket'
-            },
-            closedTicket: {
-                type: [Schema.Types.ObjectId],
+            }],
+            closedTicket: [{
+                type: Schema.Types.ObjectId,
                 ref: 'Ticket'
-            }
+            }]
         },
         adminTickets: {
-            openTickets: {
-                    type: [Schema.Types.ObjectId],
+            openTickets: [{
+                    type: Schema.Types.ObjectId,
                     ref: 'Ticket'
-            },
-            closedTickets: {
-                    type: [Schema.Types.ObjectId],
+            }],
+            closedTickets: [{
+                    type: Schema.Types.ObjectId,
                     ref: 'Ticket'
-            }
+            }]
         },
         Roles: {
-            user: {
-                    type: [Schema.Types.ObjectId],
+            user: [{
+                    type: Schema.Types.ObjectId,
                     ref: 'ticketBucket'
-            },
-            l1Admin: {
-                    type: [Schema.Types.ObjectId],
+            }],
+            l1Admin: [{
+                    type: Schema.Types.ObjectId,
                     ref: 'ticketBucket'
-            },
-            l2Admin: {
-                    type: [Schema.Types.ObjectId],
+            }],
+            l2Admin: [{
+                    type: Schema.Types.ObjectId,
                     ref: 'ticketBucket'
-            }
+            }]
         },
         createdAt: {
             type: Date,

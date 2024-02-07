@@ -1,4 +1,5 @@
 const User = require("../models/user");
+const { readToken } = require("../utils/manageUserPermission")
 
 // User controller object
 const userController = {
@@ -12,10 +13,12 @@ const userController = {
             res.sendStatus(400);
         })
     },
-
+// TODO
     // Get user by ID
-    getUserById({params}, res) {
-        User.findById(params.id)
+    getUserById(req, res) {
+        const id = readToken(req.cookies.token)
+        console.log(id)
+        User.findById(id)
         .then(dbData => {
             res.json(dbData)
         })

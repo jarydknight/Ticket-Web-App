@@ -1,3 +1,4 @@
+const jwt = require("jsonwebtoken");
 const ticketBucket = require("../models/ticketBucket");
 const User = require("../models/user");
 
@@ -10,5 +11,13 @@ function addUserPermissions (userId, role, ticketBucketId) {
     })
 
 };
+// TODO
+function readToken (cookie) {
+    const id = jwt.verify(cookie, process.env.TOKEN_KEY, (err, decoded) => {
+        return decoded._id;
+    })
+    return id;
+    
+}
 
-module.exports = addUserPermissions 
+module.exports = { addUserPermissions, readToken }

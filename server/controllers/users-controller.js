@@ -13,11 +13,10 @@ const userController = {
             res.sendStatus(400);
         })
     },
-// TODO
+
     // Get user by ID
     getUserById(req, res) {
         const id = readToken(req.cookies.token)
-        console.log(id)
         User.findById(id)
         .then(dbData => {
             res.json(dbData)
@@ -28,8 +27,9 @@ const userController = {
     },
 
     // Delete user by ID
-    deleteUserByID({params}, res) {
-        User.findOneAndDelete(params.id)
+    deleteUserByID(req, res) {
+        const id = readToken(req.cookies.token)
+        User.findOneAndDelete(id)
         .then(dbData => {
             if (!dbData) {
                 res.status(404).json({message: 'User not fonud'})

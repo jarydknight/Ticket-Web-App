@@ -1,11 +1,20 @@
 const { response } = require("express")
 const Ticket = require("../models/ticket")
+const { readToken } = require("../utils/manageUserPermission")
+const { Types } = require("mongoose")
 
 // Ticket controller object
 const ticketController = {
     //Create new ticket
-    createNewTicket({body}, res) {
-        Ticket.create(body)
+    createNewTicket(req, res) {
+        const id = readToken(req.cookies.token)
+        Ticket.create({
+            "ticketNumber": req.body.ticketNumber,
+            "user": id,
+            "ticketDetails": req.body.ticketDetails,
+            "ticketComments": req.body.ticketComments,
+            "bucket": req.body.ticketBucket
+        })
         .then(dbData => {
             res.json(dbData)
         })
@@ -24,11 +33,16 @@ const ticketController = {
         })
     },
 
-    getTicketById({params}, res) {
-        Ticket.findById(params.id)
+    getTicketById(req, res) {
+        const id = readToken(req.cookies.token)
+        Ticket.findById(req.params.id)
         .populate("user")
         .then(dbData => {
-            if (!dbData) {
+            console.log(dbData)
+            if (dbData.user._id.toString() !== id) {
+                res.status(401).json({message: "User not authorized to access this resource"})
+                return;
+            } else if (!dbData) {
                 res.status(404).json({message: "Ticket not found"})
                 return;
             }

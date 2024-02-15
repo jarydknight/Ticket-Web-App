@@ -1,5 +1,4 @@
 const User = require("../models/user");
-const { readToken } = require("../utils/manageUserPermission")
 
 // User controller object
 const userController = {
@@ -16,7 +15,7 @@ const userController = {
 
     // Get user by ID
     getUserById(req, res) {
-        const id = readToken(req.cookies.token)
+        const id = res.locals.userId
         User.findById(id)
         .then(dbData => {
             res.json(dbData)
@@ -28,7 +27,7 @@ const userController = {
 
     // Delete user by ID
     deleteUserByID(req, res) {
-        const id = readToken(req.cookies.token)
+        const id = res.locals.userId
         User.findOneAndDelete(id)
         .then(dbData => {
             if (!dbData) {

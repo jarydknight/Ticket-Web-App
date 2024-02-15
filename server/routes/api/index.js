@@ -5,9 +5,10 @@ const ticketBucketRoutes = require("./ticketBucketRoutes");
 const ticketCommentRoutes = require("./ticketCommentRoutes");
 const signupRoutes = require("./signupRoutes");
 const loginRoutes = require("./loginRoutes");
+const { authenticateUser } = require("../../utils/manageUserPermission");
 
-router.use('/users', userRoutes);
-router.use('/tickets', ticketRoutes);
+router.use('/users', authenticateUser, userRoutes);
+router.use('/tickets', authenticateUser, ticketRoutes);
 router.use('/bucket', ticketBucketRoutes);
 router.use('/comment', ticketCommentRoutes);
 router.use('/signup', signupRoutes);

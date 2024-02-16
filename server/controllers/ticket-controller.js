@@ -1,26 +1,31 @@
-const { response } = require("express")
 const Ticket = require("../models/ticket")
 const { checkAdminPrivilege } = require("../utils/manageUserPermission")
-const { Types } = require("mongoose")
 
 // Ticket controller object
 const ticketController = {
     //Create new ticket
     createNewTicket(req, res) {
-        const id = readToken(req.cookies.token)
-        Ticket.create({
-            "ticketNumber": req.body.ticketNumber,
-            "user": id,
-            "ticketDetails": req.body.ticketDetails,
-            "ticketComments": req.body.ticketComments,
-            "bucket": req.body.ticketBucket
-        })
-        .then(dbData => {
-            res.json(dbData)
-        })
-        .catch(err => {
-            res.json(err)
-        })
+        const id = res.locals.userId;
+        const privilege = res.locals.privilege;
+
+        if (privilege) {
+            Ticket.create({
+                "ticketNumber": req.body.ticketNumber,
+                "user": id,
+                "ticketDetails": req.body.ticketDetails,
+                "ticketComments": req.body.ticketComments,
+                "bucket": req.body.ticketBucket
+            })
+            .then(dbData => {
+                res.json(dbData)
+            })
+            .catch(err => {
+                res.json(err)
+            })
+        } else {
+            res.json({message: "User not authorized to create new ticket"})
+        }
+        
     },
     getAllTickets(req, res) {
         Ticket.find({})
@@ -49,11 +54,11 @@ const ticketController = {
 
     getTicketById(req, res) {
     const userId = res.locals.userId;
+    const privilege = res.locals.privilege
     Ticket.findById(req.params.id)
     .populate("user")
     .then( async (dbData) => {
-        const privilege = await checkAdminPrivilege(userId, dbData.bucket)
-        console.log(privilege)
+        // const privilege = (userId, dbData.bucket)
         if (!dbData) {
             res.status(404).json({message: "Ticket not found"})
         } else if (privilege === "l1Admin") {

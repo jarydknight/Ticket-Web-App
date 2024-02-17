@@ -1,6 +1,6 @@
 const jwt = require("jsonwebtoken");
-const ticketBucket = require("../models/ticketBucket");
 const User = require("../models/user");
+const Ticket = require("../models/ticket");
 
 // Apply user permissions to user
 function addUserPermissions (userId, role, ticketBucketId) {
@@ -30,11 +30,11 @@ function authenticateUser (req, res, next) {
     next()
 }
 
+// Check user privilege for ticket bucket they are trying to access
 const checkPrivilege = async (req, res, next) => {
     return new Promise((resolve, reject) => {
         const userId = res.locals.userId;
         const bucketId = req.body.ticketBucket
-        console.log(userId, bucketId)
         User.findById(userId)
         .then(dbData => {
             let privilege;
@@ -54,11 +54,36 @@ const checkPrivilege = async (req, res, next) => {
         })
         .catch(err => {
             console.error(err);
-            reject("Error checking admin privilege");
+            reject("Error checking privilege");
         });
         
         
     });
 };
 
-module.exports = { addUserPermissions, authenticateUser, checkPrivilege }
+const checkOwnership = async (req, res, next) => {
+    // console.log(req.params)
+    return new Promise((resolve, reject) => {
+        const ticketId = req.params.id;
+
+        Ticket.findById(ticketId)
+        .then(dbData => {
+            let ownership
+
+            if (ticketId === dbData.user.toString()) {
+                ownership = true;
+            } else {
+                ownership = false;
+            }
+            res.locals.ownership = ownership;
+            resolve(ownership);
+            next()
+        })
+        .catch(err => {
+            console.error(err);
+            reject("Error checking ownership")
+        })
+    })
+}
+
+module.exports = { addUserPermissions, authenticateUser, checkPrivilege, checkOwnership }

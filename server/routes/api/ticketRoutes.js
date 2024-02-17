@@ -1,4 +1,5 @@
 const { createNewTicket, getAllTickets, getTicketById, deleteTicketById } = require("../../controllers/ticket-controller");
+const { checkOwnership } = require("../../utils/manageUserPermission")
 
 const router = require("express").Router();
 
@@ -8,6 +9,6 @@ router.route('/')
 
 router.route('/:id')
 .get(getTicketById)
-.delete(deleteTicketById);
+.delete(checkOwnership, deleteTicketById);
 
 module.exports = router;

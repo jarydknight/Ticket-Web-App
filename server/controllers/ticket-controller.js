@@ -1,5 +1,4 @@
 const Ticket = require("../models/ticket")
-const { checkAdminPrivilege } = require("../utils/manageUserPermission")
 
 // Ticket controller object
 const ticketController = {
@@ -38,23 +37,33 @@ const ticketController = {
         })
     },
 
-    deleteTicketById(params, res) {
-        Ticket.findOneAndDelete(params.id)
-        .then(dbData => {
-            if (!dbData) {
-                res.status(404).json({message: "Ticket not found"})
-                return;
-            }
-            res.json(dbData)
-        })
-        .catch(err => {
-            res.json(err)
-        })
+    deleteTicketById(req, res) {
+        const privilege = res.locals.privilege;
+        const ownership = res.locals.ownership
+
+        if (privilege === "l1Admin" || privilege === "l2Admin" || ownership) {
+            Ticket.findOneAndDelete(req.params.id)
+            .then(dbData => {
+                if (!dbData) {
+                    res.status(404).json({message: "Ticket not found"})
+                    return;
+                }
+                res.json(dbData)
+            })
+            .catch(err => {
+                res.json(err)
+            })
+        } else {
+            res.status(401).json({message: "User not aurthorized to delete this ticket"})
+        }
+        
     },
 
+    // TODO: implement ownership middleware and cleanup code
     getTicketById(req, res) {
     const userId = res.locals.userId;
     const privilege = res.locals.privilege
+
     Ticket.findById(req.params.id)
     .populate("user")
     .then( async (dbData) => {

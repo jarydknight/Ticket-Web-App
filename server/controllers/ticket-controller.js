@@ -59,34 +59,34 @@ const ticketController = {
         
     },
 
-    // TODO: implement ownership middleware and cleanup code
     getTicketById(req, res) {
-    const userId = res.locals.userId;
-    const privilege = res.locals.privilege
+        const privilege = res.locals.privilege;
+        const ownership = res.locals.ownership;
 
-    Ticket.findById(req.params.id)
-    .populate("user")
-    .then( async (dbData) => {
-        // const privilege = (userId, dbData.bucket)
-        if (!dbData) {
-            res.status(404).json({message: "Ticket not found"})
-        } else if (privilege === "l1Admin") {
-            console.log("User is an l1Admin")
-            res.json(dbData)
-        } else if(privilege === "l2Admin") {
-            console.log("user is an l2Admin")
-            res.json(dbData)
-        } else if (userId === dbData.user._id.toString()) {
-            console.log("User is the owner of this ticket")
-            res.json(dbData)
+        if (privilege === "l1Admin" || privilege === "l2Admin" || ownership ) {
+           
+            try {
+                const ticket = res.locals.ticket;
+
+                if (privilege === "l1Admin") {
+                    console.log("User is an l1Admin")
+                    res.json(ticket)
+                } else if (privilege === "l2Admin") {
+                    console.log("user is an l2Admin")
+                    res.json(ticket)
+                } else if (ownership) {
+                    console.log("User is the owner of this ticket")
+                    res.json(ticket)
+                }
+            } catch {
+                console.error(err);
+                res.status(404).json({message: "Ticket not found"})
+            }
         } else {
-            res.status(401).json({message: "User not authorized to access this resource"})
+            res.status(401).json({mesage: "User is not authorized to access this ticket"})
         }
-    })
-    .catch(err => {
-        res.json({message: err})
-    })
-}
+        
+    }
 }
 
 module.exports = ticketController;

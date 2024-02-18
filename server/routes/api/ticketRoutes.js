@@ -8,7 +8,7 @@ router.route('/')
 .post(createNewTicket)
 
 router.route('/:id')
-.get(getTicketById)
+.get(checkOwnership, getTicketById)
 .delete(checkOwnership, deleteTicketById);
 
 module.exports = router;

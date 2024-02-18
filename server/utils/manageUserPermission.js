@@ -61,27 +61,34 @@ const checkPrivilege = async (req, res, next) => {
     });
 };
 
+// Checks for ownership of ticket and attaches ticket to res.locals so that ticket does not need to be looked up again when passed from this middleware
 const checkOwnership = async (req, res, next) => {
     // console.log(req.params)
     return new Promise((resolve, reject) => {
         const ticketId = req.params.id;
+        const userId = res.locals.userId
 
         Ticket.findById(ticketId)
+        .populate("user")
         .then(dbData => {
             let ownership
+            console.log(res.locals.userId, " ", dbData.user._id.toString())
 
-            if (ticketId === dbData.user.toString()) {
+            if (userId === dbData.user._id.toString()) {
                 ownership = true;
             } else {
                 ownership = false;
             }
+            res.locals.ticket = dbData;
             res.locals.ownership = ownership;
             resolve(ownership);
             next()
         })
         .catch(err => {
-            console.error(err);
-            reject("Error checking ownership")
+            // Keeping reject part of promise causes error to not be handled properly by catch statement
+            // reject("Ticket not found");
+            console.error(err)
+            res.status(404).json({message:"Ticket not found"})
         })
     })
 }

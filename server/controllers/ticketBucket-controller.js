@@ -7,7 +7,7 @@ const ticketBucketController = {
     createNewTicketBucket({body}, res) {
         TicketBucket.create(body)
         .then((dbData) => {
-            addUserPermissions(body.userId, "l1Admin", dbData._id)
+            addUserPermissions(res.locals.userId, "l1Admin", dbData._id)
             res.json({"message": "Ticket Bucket successfully created"})
         })
     },

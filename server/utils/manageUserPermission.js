@@ -9,6 +9,10 @@ function addUserPermissions (userId, role, ticketBucketId) {
         dbData.Roles[`${role}`].push(ticketBucketId)
         dbData.save()
     })
+    .catch(err => {
+        console.error(err);
+        res.json({message: "Error adding user permission"})
+    })
 };
 
 // Middleware to read JWT token to authenticate user and protect routes that require auth

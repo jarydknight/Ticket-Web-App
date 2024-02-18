@@ -9,8 +9,8 @@ const { authenticateUser, checkPrivilege } = require("../../utils/manageUserPerm
 
 router.use('/users', authenticateUser, checkPrivilege, userRoutes);
 router.use('/tickets', authenticateUser, checkPrivilege, ticketRoutes);
-router.use('/bucket', ticketBucketRoutes);
-router.use('/comment', ticketCommentRoutes);
+router.use('/bucket', authenticateUser, ticketBucketRoutes);
+router.use('/comment', authenticateUser, ticketCommentRoutes);
 router.use('/signup', signupRoutes);
 router.use('/login', loginRoutes);
 

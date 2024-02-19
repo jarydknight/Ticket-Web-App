@@ -1,5 +1,5 @@
 const TicketBucket = require("../models/ticketBucket");
-const addUserPermissions = require("../utils/manageUserPermission");
+const { addUserPermissions } = require("../utils/manageUserPermission");
 
 // ticketBucker Controller object
 const ticketBucketController = {

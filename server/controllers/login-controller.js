@@ -9,19 +9,21 @@ const loginController = {
         }
 
         const user = await User.findOne({email: body.email})
-        .select("password");
+        .select(["_id", "password", "email"]);
+        console.log(user)
 
         if (!user) {
             return res.json({message: "Incorrect email or password"})
         }
 
         const auth = await bcrypt.compare(body.password, user.password);
+        let token;
 
         if (!auth) {
             return res.json({message: "Incorrect email or password"})
+        } else {
+            token = generateToken(user._id)
         }
-
-        const token = generateToken(user._id)
 
         res.cookie("token", token, {
             withCredentials: true,

@@ -1,18 +1,30 @@
 const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const Ticket = require("../models/ticket");
+const Bucket = require("../models/ticketBucket")
 
 // Apply user permissions to user
 function addUserPermissions (userId, role, ticketBucketId) {
-    User.findById(userId)
-    .then((dbData) => {
-        dbData.Roles[`${role}`].push(ticketBucketId)
-        dbData.save()
-    })
-    .catch(err => {
-        console.error(err);
-        res.json({message: "Error adding user permission"})
-    })
+    try {
+        User.findById(userId)
+        .then((dbData) => {
+            dbData.Roles[`${role}`].push(ticketBucketId);
+            dbData.save();
+        })
+    } catch {
+        res.json({message: "Error adding adding permissions to user"})
+    }
+
+    try {
+        Bucket.findById(ticketBucketId)
+        .select(`${role}`)
+        .then( dbData => {
+            dbData[`${role}`].push(userId);
+            dbData.save();
+        })
+    } catch {
+        res.json({message: "Error adding permissions to ticket bucket"})
+    }
 };
 
 // Middleware to read JWT token to authenticate user and protect routes that require auth

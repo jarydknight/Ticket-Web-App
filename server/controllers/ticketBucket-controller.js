@@ -14,28 +14,50 @@ const ticketBucketController = {
 
     // Find ticket Bucket by ID
     getTicketBucketById({params}, res) {
-        TicketBucket.findById(params.id)
-        .then(dbData => {
-            res.json(dbData)
-        })
-        .catch(err => {
-            res.sendStatus(400)
-        })
+        const privilege = res.locals.privilege;
+
+        if (privilege === "l1Admin" || privilege === "l2Admin") {
+            TicketBucket.findById(params.id)
+            .select(["users", "l1Admin", "l2Admin", "userJoinRequests"])
+            .populate(["users", "l1Admin", "l2Admin", "userJoinRequest"])
+            .then(dbData => {
+                res.json(dbData)
+            })
+            .catch(err => {
+                console.error(err)
+                res.sendStatus(400)
+            })
+        } else {
+            TicketBucket.findById(params.id)
+            .then(dbData => {
+                res.json(dbData)
+            })
+            .catch(err => {
+                console.error(err)
+                res.sendStatus(400)
+            })
+        }
     },
 
     // Delete Ticket Bucket by ID
     deleteTicketBucketById({params}, res) {
-        TicketBucket.findOneAndDelete(params.id)
-        .then(dbData => {
-            if (!dbData) {
-                res.status(404).json({message: "Bucketnot found"})
-                return;
-            }
-            res.json(dbData)
-        })
-        .catch(err => {
-            res.json(err)
-        })
+        const privilege = res.locals.privilege;
+
+        if (privilege === "l1Admin") {
+            TicketBucket.findOneAndDelete(params.id)
+            .then(dbData => {
+                if (!dbData) {
+                    res.status(404).json({message: "Bucket not found"})
+                    return;
+                }
+                res.json(dbData)
+            })
+            .catch(err => {
+                res.json(err)
+            })
+        } else {
+            res.json({message: "User not authorized to delete ticket bucket"})
+        }
     }
 }
 

@@ -8,7 +8,8 @@ const loginController = {
             return res.json({message: "Missing email or password"})
         }
 
-        const user = await User.findOne({email: body.email});
+        const user = await User.findOne({email: body.email})
+        .select("password");
 
         if (!user) {
             return res.json({message: "Incorrect email or password"})

@@ -9,23 +9,27 @@ const TicketBucketSchema = new Schema(
         },
         users: {
             type: [Schema.Types.ObjectId],
-            ref: 'User'
+            ref: 'User',
+            select: false
         },
         l1Admin: {
             type: [Schema.Types.ObjectId],
-            ref: 'User'
+            ref: 'User',
+            select: false
         },
         l2Admin: {
             type: [Schema.Types.ObjectId],
-            ref: 'User'
+            ref: 'User',
+            select: false
         },
         userJoinRequest: {
             type: [Schema.Types.ObjectId],
-            ref: 'User'
+            ref: 'User',
+            select: false
         },
         createdAt: {
             type: Date,
-            default: Date.now()
+            default: Date.now(),
         }
     }
 )

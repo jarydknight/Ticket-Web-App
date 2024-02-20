@@ -10,7 +10,6 @@ const loginController = {
 
         const user = await User.findOne({email: body.email})
         .select(["_id", "password", "email"]);
-        console.log(user)
 
         if (!user) {
             return res.json({message: "Incorrect email or password"})

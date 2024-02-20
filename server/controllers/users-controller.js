@@ -15,14 +15,24 @@ const userController = {
 
     // Get user by ID
     getUserById(req, res) {
-        const id = res.locals.userId
-        User.findById(id)
-        .then(dbData => {
-            res.json(dbData)
-        })
-        .catch(err => {
-            res.sendStatus(400)
-        });
+        const id = req.params.id;
+
+        try {
+            User.findById(id)
+            .then(dbData => {
+                if (dbData) {
+                    res.json(dbData)
+                } else {
+                    res.status(401).json({message: "User not found"})
+                }
+            })
+        } catch {
+            res.status(400).json({message: "Error finding user"})
+        }
+        
+        // .catch( err => {
+        //     res.status(400).json({message: "User not found"})
+        // });
     },
 
     // Delete user by ID

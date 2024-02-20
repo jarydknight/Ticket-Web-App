@@ -1,4 +1,6 @@
-const Ticket = require("../models/ticket")
+const Ticket = require("../models/ticket");
+const User = require("../models/user");
+const Bucket = require("../models/ticketBucket");
 
 // Ticket controller object
 // TODO: ADD TICKET OBJECT ID TO USER OBJECT AND BUCKET OBJECT WHEN TICKET CREATED
@@ -18,12 +20,37 @@ const ticketController = {
                 "status": "open"
             })
             .then(dbData => {
-                res.json(dbData)
+                res.locals.ticket = dbData;
             })
             .catch(err => {
                 res.json(err)
             })
 
+            // Add ticket ObjectId to User object
+            User.findById(id)
+            .then(dbData => {
+                dbData.userTickets.push(res.locals.ticket._id);
+                dbData.save();
+            })
+            .catch(err => {
+                console.error(err)
+                res.json({message: "Error adding ticket to user object"})
+            })
+            
+
+            // Add ticket ObjectId to Bucket object
+            Bucket.findById(req.body.ticketBucket)
+            .select("tickets")
+            .then(dbData => {
+                dbData.tickets.push(res.locals.ticket._id);
+                dbData.save();
+            })
+            .catch(err => {
+                console.error(err)
+                res.json({message: "Error adding ticket to bucket object"})
+            })
+
+            res.json({message: "Ticket created successfully"})
 
         } else {
             res.json({message: "User not authorized to create new ticket"})

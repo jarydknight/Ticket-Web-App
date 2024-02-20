@@ -27,6 +27,11 @@ const TicketBucketSchema = new Schema(
             ref: 'User',
             select: false
         },
+        tickets: {
+            type: [Schema.Types.ObjectId],
+            ref: 'Ticket',
+            select: false
+        },
         createdAt: {
             type: Date,
             default: Date.now(),

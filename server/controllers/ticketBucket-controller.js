@@ -19,7 +19,7 @@ const ticketBucketController = {
         if (privilege === "l1Admin" || privilege === "l2Admin") {
             TicketBucket.findById(params.id)
             .select(["users", "l1Admin", "l2Admin", "userJoinRequests"])
-            .populate(["users", "l1Admin", "l2Admin", "userJoinRequest"])
+            .populate(["users", "l1Admin", "l2Admin", "userJoinRequest", "tickets"])
             .then(dbData => {
                 res.json(dbData)
             })

@@ -28,24 +28,12 @@ const UserSchema = new Schema(
             type: String
         },
         userTickets: {
-            openTickets: [{
-                type: Schema.Types.ObjectId,
-                ref: 'Ticket'
-            }],
-            closedTicket: [{
-                type: Schema.Types.ObjectId,
-                ref: 'Ticket'
-            }]
+            type: [Schema.Types.ObjectId],
+            ref: 'Ticket'
         },
         adminTickets: {
-            openTickets: [{
-                    type: Schema.Types.ObjectId,
-                    ref: 'Ticket'
-            }],
-            closedTickets: [{
-                    type: Schema.Types.ObjectId,
-                    ref: 'Ticket'
-            }]
+            type: [Schema.Types.ObjectId],
+            ref: 'Ticket'
         },
         Roles: {
             user: [{

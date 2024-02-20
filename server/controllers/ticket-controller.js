@@ -1,6 +1,7 @@
 const Ticket = require("../models/ticket")
 
 // Ticket controller object
+// TODO: ADD TICKET OBJECT ID TO USER OBJECT AND BUCKET OBJECT WHEN TICKET CREATED
 const ticketController = {
     //Create new ticket
     createNewTicket(req, res) {
@@ -13,7 +14,8 @@ const ticketController = {
                 "user": id,
                 "ticketDetails": req.body.ticketDetails,
                 "ticketComments": req.body.ticketComments,
-                "bucket": req.body.ticketBucket
+                "bucket": req.body.ticketBucket,
+                "status": "open"
             })
             .then(dbData => {
                 res.json(dbData)
@@ -21,6 +23,8 @@ const ticketController = {
             .catch(err => {
                 res.json(err)
             })
+
+
         } else {
             res.json({message: "User not authorized to create new ticket"})
         }

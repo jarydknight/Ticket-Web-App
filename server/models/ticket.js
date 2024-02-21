@@ -13,6 +13,10 @@ const ticketSchema = new Schema(
             ref: 'User',
             required: true
         },
+        assignee: {
+            type: Schema.Types.ObjectId,
+            ref: 'User',
+        },
         ticketDetails: {
             type: String,
             required: true,

@@ -85,7 +85,7 @@ const checkOwnership = async (req, res, next) => {
         const userId = res.locals.userId
 
         Ticket.findById(ticketId)
-        .populate(["user", "ticketComments"])
+        .populate(["user", "ticketComments", "assignee"])
         .then(dbData => {
             let ownership
 

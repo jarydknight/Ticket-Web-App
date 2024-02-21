@@ -97,6 +97,7 @@ const ticketController = {
         if (privilege === "l1Admin" || privilege === "l2Admin" || ownership ) {
            
             try {
+                // Ticket is queried in DB when checking ownership so ticket is added to res.locals so that another query to the DB does not need to be made
                 const ticket = res.locals.ticket;
 
                 if (ownership || privilege === "l1Admin" || privilege === "l2Admin") {

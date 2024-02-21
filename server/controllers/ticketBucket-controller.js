@@ -61,19 +61,43 @@ const ticketBucketController = {
     },
 
     // User request to join bucket as a user
-    userMembershipRequest(req, res) {
+    userPermissionRequest(req, res) {
         const ticketBucketId = req.params.id;
         const userId = res.locals.userId;
         try {
             TicketBucket.findById(ticketBucketId)
             .select("userJoinRequest")
             .then(dbData => {
-                dbData.userJoinRequest.push(userId);
+                dbData.userJoinRequests.push(userId);
                 dbData.save()
                 res.json({message: "User permission request was successful"})
             })
         } catch {
             res.status(400).json({message: "Error requesting user privilege for this bucket"})
+        }
+    },
+
+    // Admin get user membership request
+    getUserPermissionRequests (req, res) {
+        const ticketBucketId = req.params.id;
+        const privilege = res.locals.privilege;
+
+        if (privilege === "l1Admin" || privilege === "l2Admin") {
+            try {
+                TicketBucket.findById(ticketBucketId)
+                .select("userJoinRequests")
+                .populate("userJoinRequests")
+                .then(dbData => {
+                    res.json({
+                        message: "Request successful",
+                        data: dbData
+                    })
+                })
+            } catch {
+                res.status(400).json({message: "Error retrieving user permission requests"})
+            }
+        } else {
+            res.status(401).json({message: "User not authorized to access user permission requests"})
         }
     }
 }

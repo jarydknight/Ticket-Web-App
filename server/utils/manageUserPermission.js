@@ -51,6 +51,7 @@ const checkPrivilege = async (req, res, next) => {
     return new Promise((resolve, reject) => {
         const userId = res.locals.userId;
         const bucketId = req.body.ticketBucket
+        
         User.findById(userId)
         .then(dbData => {
             let privilege;
@@ -64,6 +65,7 @@ const checkPrivilege = async (req, res, next) => {
             } else {
                 privilege = false;
             }
+            
             res.locals.privilege = privilege
             resolve(privilege);
             next()

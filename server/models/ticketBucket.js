@@ -22,7 +22,7 @@ const TicketBucketSchema = new Schema(
             ref: 'User',
             select: false
         },
-        userJoinRequest: {
+        userJoinRequests: {
             type: [Schema.Types.ObjectId],
             ref: 'User',
             select: false

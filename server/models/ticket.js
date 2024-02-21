@@ -20,7 +20,7 @@ const ticketSchema = new Schema(
         },
         ticketComments: {
             type: [Schema.Types.ObjectId],
-            ref: 'ticketComments',
+            ref: 'TicketComment',
             immutable: true
         },
         status: {

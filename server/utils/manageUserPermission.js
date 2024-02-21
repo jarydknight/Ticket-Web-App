@@ -81,7 +81,7 @@ const checkPrivilege = async (req, res, next) => {
 const checkOwnership = async (req, res, next) => {
     // console.log(req.params)
     return new Promise((resolve, reject) => {
-        const ticketId = req.params.id;
+        const ticketId = req.params.id || req.body.ticket;
         const userId = res.locals.userId
 
         Ticket.findById(ticketId)

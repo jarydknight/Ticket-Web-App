@@ -8,19 +8,20 @@ const ticketSchema = new Schema(
         type: String,
         required: true
         },
-        user:
-            {
+        user: {
             type: Schema.Types.ObjectId,
             ref: 'User',
             required: true
-            },
+        },
         ticketDetails: {
             type: String,
             required: true,
+            immutable: true
         },
         ticketComments: {
             type: [Schema.Types.ObjectId],
-            ref: 'TicketComments'
+            ref: 'ticketComments',
+            immutable: true
         },
         status: {
             type: String,
@@ -33,7 +34,8 @@ const ticketSchema = new Schema(
         bucket: {
             type: Schema.Types.ObjectId,
             ref: 'TicketBucket',
-            required: true
+            required: true,
+            immutable: true
         }
     }
 );

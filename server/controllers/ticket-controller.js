@@ -99,22 +99,35 @@ const ticketController = {
             try {
                 const ticket = res.locals.ticket;
 
-                if (privilege === "l1Admin") {
-                    console.log("User is an l1Admin")
+                if (ownership || privilege === "l1Admin" || privilege === "l2Admin") {
                     res.json(ticket)
-                } else if (privilege === "l2Admin") {
-                    console.log("user is an l2Admin")
-                    res.json(ticket)
-                } else if (ownership) {
-                    console.log("User is the owner of this ticket")
-                    res.json(ticket)
-                }
+                } 
             } catch {
                 console.error(err);
                 res.status(404).json({message: "Ticket not found"})
             }
         } else {
             res.status(401).json({mesage: "User is not authorized to access this ticket"})
+        }
+        
+    },
+
+   modifyTicket(req, res) {
+    const privilege = res.locals.privilege;
+
+        if (privilege === "l1Admin" || privilege === "l2Admin") {
+            try {
+                const ticket = res.locals.ticket;
+                Ticket.updateOne({_id: ticket._id}, req.body)
+                .then( dbData => {
+                    res.json({message: "Ticket updated Successfully"})
+                })
+                
+            } catch {
+                res.status(400).json({message: "Error updating ticket"})
+            }
+        } else {
+            res.status(401).json({message:"User not authorized to modify this ticket"})
         }
         
     }

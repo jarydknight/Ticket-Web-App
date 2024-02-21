@@ -17,38 +17,43 @@ const userController = {
     getUserById(req, res) {
         const id = req.params.id;
 
-        try {
-            User.findById(id)
-            .then(dbData => {
-                if (dbData) {
-                    res.json(dbData)
-                } else {
-                    res.status(401).json({message: "User not found"})
-                }
-            })
-        } catch {
-            res.status(400).json({message: "Error finding user"})
+        if (id === res.locals.userId) {
+            try {
+                User.findById(id)
+                .then(dbData => {
+                    if (dbData) {
+                        res.json(dbData)
+                    } else {
+                        res.status(401).json({message: "User not found"})
+                    }
+                })
+            } catch {
+                res.status(400).json({message: "Error finding user"})
+            }
+        } else {
+            res.status(401).json({message:"User not authorized to access user"})
         }
-        
-        // .catch( err => {
-        //     res.status(400).json({message: "User not found"})
-        // });
     },
 
     // Delete user by ID
     deleteUserByID(req, res) {
-        const id = res.locals.userId
-        User.findOneAndDelete(id)
-        .then(dbData => {
-            if (!dbData) {
-                res.status(404).json({message: 'User not fonud'})
-                return;
-            }
-            res.json(dbData)
-        })
-        .catch(err => {
-            res.json(err)
-        })
+        const id = req.params.id;
+
+        if (id === res.locals.userId) {
+            User.findOneAndDelete(id)
+            .then(dbData => {
+                if (!dbData) {
+                    res.status(404).json({message: 'User not fonud'})
+                    return;
+                }
+                res.json(dbData)
+            })
+            .catch(err => {
+                res.json(err)
+            })
+        } else {
+            res.status(401).json({message: "User not authorized to delete this user"})
+        }
     }
 }
 

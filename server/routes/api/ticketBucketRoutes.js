@@ -1,5 +1,5 @@
 const router = require("express").Router();
-const { createNewTicketBucket, getTicketBucketById, deleteTicketBucketById } = require("../../controllers/ticketBucket-controller");
+const { createNewTicketBucket, getTicketBucketById, deleteTicketBucketById, userMembershipRequest } = require("../../controllers/ticketBucket-controller");
 
 router.route("/")
 .post(createNewTicketBucket)
@@ -15,8 +15,8 @@ router.route("/:id")
 
 // TODO: COMPLETE FUNCTIONS FOR THE PERMISSION ROUTE FOR BUCKETS FOR USERS
 
-// router.route("/:id/permissions/user")
-// .put(userModifyBucketPermissions)
+router.route("/:id/permissions/user")
+.put(userMembershipRequest)
 
 
 module.exports = router;

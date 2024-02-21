@@ -58,6 +58,23 @@ const ticketBucketController = {
         } else {
             res.json({message: "User not authorized to delete ticket bucket"})
         }
+    },
+
+    // User request to join bucket as a user
+    userMembershipRequest(req, res) {
+        const ticketBucketId = req.params.id;
+        const userId = res.locals.userId;
+        try {
+            TicketBucket.findById(ticketBucketId)
+            .select("userJoinRequest")
+            .then(dbData => {
+                dbData.userJoinRequest.push(userId);
+                dbData.save()
+                res.json({message: "User permission request was successful"})
+            })
+        } catch {
+            res.status(400).json({message: "Error requesting user privilege for this bucket"})
+        }
     }
 }
 

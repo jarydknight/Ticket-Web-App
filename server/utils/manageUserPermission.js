@@ -2,6 +2,7 @@ const jwt = require("jsonwebtoken");
 const User = require("../models/user");
 const Ticket = require("../models/ticket");
 const Bucket = require("../models/ticketBucket")
+const Mongoose = require("mongoose")
 
 // Apply user permissions to user
 function addUserPermissions (userId, role, ticketBucketId) {
@@ -17,9 +18,10 @@ function addUserPermissions (userId, role, ticketBucketId) {
 
     try {
         Bucket.findById(ticketBucketId)
-        .select(`${role}`)
+        .select(`${role}s`)
+        .populate(`${role}s`)
         .then( dbData => {
-            dbData[`${role}`].push(userId);
+            dbData[`${role}s`].push(userId);
             dbData.save();
         })
     } catch {
@@ -65,7 +67,6 @@ const checkPrivilege = async (req, res, next) => {
             } else {
                 privilege = false;
             }
-            
             res.locals.privilege = privilege
             resolve(privilege);
             next()
@@ -110,4 +111,39 @@ const checkOwnership = async (req, res, next) => {
     })
 }
 
-module.exports = { addUserPermissions, authenticateUser, checkPrivilege, checkOwnership }
+const acceptUserPermissionRequest = (userId, ticketBucketId) => {
+    try {
+        addUserPermissions(userId, "user", ticketBucketId);
+
+        // Remove userId from joinRequests array on ticketBucket object
+        Bucket.findById(ticketBucketId)
+        .select("userJoinRequests")
+        .then(dbData => {
+            const index = dbData.userJoinRequests.indexOf(new Mongoose.Types.ObjectId(userId))
+
+            dbData.userJoinRequests.splice(index, 1);
+            dbData.save();
+        })
+        return true;
+    } catch {
+        return false;
+    }
+}
+
+const rejectUserPermissionRequest = (userId, ticketBucketId) => {
+    try {
+        Bucket.findById(ticketBucketId)
+        .select("userJoinRequests")
+        .then(dbData => {
+            const index = dbData.userJoinRequests.indexOf(new Mongoose.Types.ObjectId(userId))
+
+            dbData.userJoinRequests.splice(index, 1);
+            dbData.save();
+        })
+        return true;
+    } catch {
+       return false;
+    }
+}
+
+module.exports = { addUserPermissions, authenticateUser, checkPrivilege, checkOwnership, acceptUserPermissionRequest, rejectUserPermissionRequest }

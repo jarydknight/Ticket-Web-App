@@ -12,12 +12,12 @@ const TicketBucketSchema = new Schema(
             ref: 'User',
             select: false
         },
-        l1Admin: {
+        l1Admins: {
             type: [Schema.Types.ObjectId],
             ref: 'User',
             select: false
         },
-        l2Admin: {
+        l2Admins: {
             type: [Schema.Types.ObjectId],
             ref: 'User',
             select: false

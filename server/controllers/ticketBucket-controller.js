@@ -1,5 +1,6 @@
 const TicketBucket = require("../models/ticketBucket");
-const { addUserPermissions } = require("../utils/manageUserPermission");
+const { addUserPermissions, acceptUserPermissionRequest, rejectUserPermissionRequest } = require("../utils/manageUserPermission");
+
 
 // ticketBucker Controller object
 const ticketBucketController = {
@@ -19,7 +20,7 @@ const ticketBucketController = {
         if (privilege === "l1Admin" || privilege === "l2Admin") {
             TicketBucket.findById(params.id)
             .select(["users", "l1Admin", "l2Admin", "userJoinRequests"])
-            .populate(["users", "l1Admin", "l2Admin", "userJoinRequest", "tickets"])
+            .populate(["users", "l1Admin", "l2Admin", "userJoinRequests", "tickets"])
             .then(dbData => {
                 res.json(dbData)
             })
@@ -66,7 +67,7 @@ const ticketBucketController = {
         const userId = res.locals.userId;
         try {
             TicketBucket.findById(ticketBucketId)
-            .select("userJoinRequest")
+            .select("userJoinRequests")
             .then(dbData => {
                 dbData.userJoinRequests.push(userId);
                 dbData.save()
@@ -99,6 +100,30 @@ const ticketBucketController = {
         } else {
             res.status(401).json({message: "User not authorized to access user permission requests"})
         }
+    },
+
+    // Controller for admin to modify bucket privilege. Accept or reject user join requests and remove users from bucket
+    modifyBucketPermissions(req, res) {
+        const privilege = res.locals.privilege;
+        const action = req.body.action
+        const userId = req.body.user
+        const ticketBucketId = req.body.ticketBucket
+
+        if (privilege === "l1Admin") {
+            if (action === "accept") {
+                if (acceptUserPermissionRequest(userId, ticketBucketId)) {
+                    res.json({message: "User permission request successfully accepted"})
+                } else {
+                    res.status(400).json({message: "Error accepting user permission request"})
+                }
+            } else if (action === "reject") {
+                if (rejectUserPermissionRequest(userId, ticketBucketId)) {
+                    res.json({message: "User permission request successfully rejected"})
+                } else {
+                    res.status(400).json({message: "Error rejecting user permission request"})
+                }
+            }
+        }  
     }
 }
 

@@ -13,7 +13,7 @@ function addUserPermissions (userId, role, ticketBucketId) {
             dbData.save();
         })
     } catch {
-        res.json({message: "Error adding adding permissions to user"})
+        return false;
     }
 
     try {
@@ -25,9 +25,39 @@ function addUserPermissions (userId, role, ticketBucketId) {
             dbData.save();
         })
     } catch {
-        res.json({message: "Error adding permissions to ticket bucket"})
+        return false;
     }
+    return true;
 };
+
+function removeUserPermissions (userId, role, ticketBucketId) {
+    try {
+        User.findById(userId)
+        .then((dbData) => {
+            const index = dbData.Roles[`${role}`].indexOf(new Mongoose.Types.ObjectId(ticketBucketId));
+
+            dbData.Roles[`${role}`].splice(index, 1);
+            dbData.save();
+        })
+    } catch {
+        return false;
+    }
+
+    try {
+        Bucket.findById(ticketBucketId)
+        .select(`${role}s`)
+        // .populate(`${role}s`)
+        .then( dbData => {
+            const index = dbData[`${role}s`].indexOf(new Mongoose.Types.ObjectId(userId));
+
+            dbData[`${role}s`].splice(index, 1);
+            dbData.save();
+        })
+    } catch {
+        return false;
+    }
+    return true;
+}
 
 // Middleware to read JWT token to authenticate user and protect routes that require auth
 function authenticateUser (req, res, next) {
@@ -130,7 +160,7 @@ const acceptUserPermissionRequest = (userId, ticketBucketId) => {
     }
 }
 
-const rejectUserPermissionRequest = (userId, ticketBucketId) => {
+function rejectUserPermissionRequest (userId, ticketBucketId) {
     try {
         Bucket.findById(ticketBucketId)
         .select("userJoinRequests")
@@ -146,4 +176,4 @@ const rejectUserPermissionRequest = (userId, ticketBucketId) => {
     }
 }
 
-module.exports = { addUserPermissions, authenticateUser, checkPrivilege, checkOwnership, acceptUserPermissionRequest, rejectUserPermissionRequest }
+module.exports = { addUserPermissions, authenticateUser, checkPrivilege, checkOwnership, acceptUserPermissionRequest, rejectUserPermissionRequest, removeUserPermissions }

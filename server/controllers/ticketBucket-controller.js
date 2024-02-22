@@ -1,5 +1,5 @@
 const TicketBucket = require("../models/ticketBucket");
-const { addUserPermissions, acceptUserPermissionRequest, rejectUserPermissionRequest } = require("../utils/manageUserPermission");
+const { addUserPermissions, acceptUserPermissionRequest, rejectUserPermissionRequest, removeUserPermissions } = require("../utils/manageUserPermission");
 
 
 // ticketBucker Controller object
@@ -8,8 +8,12 @@ const ticketBucketController = {
     createNewTicketBucket({body}, res) {
         TicketBucket.create(body)
         .then((dbData) => {
-            addUserPermissions(res.locals.userId, "l1Admin", dbData._id)
-            res.json({"message": "Ticket Bucket successfully created"})
+           if ( addUserPermissions(res.locals.userId, "l1Admin", dbData._id)) {
+                res.json({"message": "Ticket Bucket successfully created"})
+           } else {
+                res.json({message: "Error adding adding permissions to user"})
+           }
+            
         })
     },
 
@@ -122,6 +126,27 @@ const ticketBucketController = {
                 } else {
                     res.status(400).json({message: "Error rejecting user permission request"})
                 }
+            } else if (action === "addL1Admin") {
+                if (addUserPermissions(userId, "l1Admin", ticketBucketId)) {
+                    res.json({message: "User successfully added as l1Admin"})
+                } else {
+                    res.status(400).json({message: "Error adding user as l1Admin"})
+                }
+            } else if (action === "addL2Admin") {
+                if (addUserPermissions(userId, "l2Admin", ticketBucketId)) {
+                    res.json({message: "User successfully added as l2Admin"})
+                } else {
+                    res.status(400).json({message: "Error adding user as l2Admin"})
+                }
+            } else if (action === "removeUser") {
+                const role = req.body.role;
+                if (removeUserPermissions(userId, role, ticketBucketId)) {
+                    res.json({message: "User permission successfully removed for this bucket"})
+                } else {
+                    res.status(400).json({message: "Error removing user privileges from this bucket"})
+                }
+            } else {
+                res.status(400).json({message: "Error modifying ticket bucket permissions. Please check action selected."})
             }
         }  
     }

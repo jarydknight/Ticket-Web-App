@@ -148,7 +148,37 @@ const ticketBucketController = {
             } else {
                 res.status(400).json({message: "Error modifying ticket bucket permissions. Please check action selected."})
             }
-        }  
+        } else if (privilege === "l2Admin") {
+            if (action === "accept") {
+                if (acceptUserPermissionRequest(userId, ticketBucketId)) {
+                    res.json({message: "User permission request successfully accepted"})
+                } else {
+                    res.status(400).json({message: "Error accepting user permission request"})
+                }
+            } else if (action === "reject") {
+                if (rejectUserPermissionRequest(userId, ticketBucketId)) {
+                    res.json({message: "User permission request successfully rejected"})
+                } else {
+                    res.status(400).json({message: "Error rejecting user permission request"})
+                }
+            } else if (action === "removeUser") {
+                const role = req.body.role;
+                
+                if (role === "user") {
+                    if (removeUserPermissions(userId, role, ticketBucketId)) {
+                        res.json({message: "User permission successfully removed for this bucket"})
+                    } else {
+                        res.status(400).json({message: "Error removing user privileges from this bucket"})
+                    }
+                } else {
+                    res.status(400).json({message: "Error modifying ticket bucket permissions. Please check action selected and make sure user has permission to complete the action"})
+                }
+            } else {
+                res.status(400).json({message: "Error modifying ticket bucket permissions. Please check action selected and make sure user has permission to complete the action"})
+            }
+        } else {
+            res.json({message: "User does not have permission to modify ticket bucket permissions"})
+        }
     }
 }
 

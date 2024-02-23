@@ -2,6 +2,7 @@ const User = require("../models/user");
 const generateToken = require("../utils/generateToken");
 const bcrypt = require("bcryptjs");
 
+// Controller for users to log in
 const loginController = {
     async Login({body}, res, next) {
         if (!body.email || !body.password) {

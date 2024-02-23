@@ -1,6 +1,7 @@
 const Ticket = require("../models/ticket");
 const User = require("../models/user");
 const Bucket = require("../models/ticketBucket");
+const Mongoose = require("mongoose");
 
 // Ticket controller object
 // TODO: ADD TICKET OBJECT ID TO USER OBJECT AND BUCKET OBJECT WHEN TICKET CREATED
@@ -12,7 +13,6 @@ const ticketController = {
 
         if (privilege) {
             Ticket.create({
-                "ticketNumber": req.body.ticketNumber,
                 "user": id,
                 "ticketDetails": req.body.ticketDetails,
                 "ticketComments": req.body.ticketComments,
@@ -68,28 +68,30 @@ const ticketController = {
         })
     },
 
-    deleteTicketById(req, res) {
-        const privilege = res.locals.privilege;
-        const ownership = res.locals.ownership
+    // Delete ticket by ID
+    // deleteTicketById(req, res) {
+    //     const privilege = res.locals.privilege;
+    //     const ownership = res.locals.ownership
 
-        if (privilege === "l1Admin" || privilege === "l2Admin" || ownership) {
-            Ticket.findOneAndDelete(req.params.id)
-            .then(dbData => {
-                if (!dbData) {
-                    res.status(404).json({message: "Ticket not found"})
-                    return;
-                }
-                res.json(dbData)
-            })
-            .catch(err => {
-                res.json(err)
-            })
-        } else {
-            res.status(401).json({message: "User not aurthorized to delete this ticket"})
-        }
+    //     if (privilege === "l1Admin" || privilege === "l2Admin" || ownership) {
+    //         Ticket.findOneAndDelete(req.params.id)
+    //         .then(dbData => {
+    //             if (!dbData) {
+    //                 res.status(404).json({message: "Ticket not found"})
+    //                 return;
+    //             }
+    //             res.json(dbData)
+    //         })
+    //         .catch(err => {
+    //             res.json(err)
+    //         })
+    //     } else {
+    //         res.status(401).json({message: "User not aurthorized to delete this ticket"})
+    //     }
         
-    },
+    // },
 
+    // Get ticket by ID
     getTicketById(req, res) {
         const privilege = res.locals.privilege;
         const ownership = res.locals.ownership;
@@ -113,19 +115,58 @@ const ticketController = {
         
     },
 
+    // TODO: receive action from body. ASSIGN, UNASSIGN, CHANGE STATUS
+    // Modify ticket allows admin to change status from open to closed and change assign/ unassign the ticket to themselves
    modifyTicket(req, res) {
     const privilege = res.locals.privilege;
+    const action = req.body.action;
+    const ticketId = res.locals.ticket._id;
+    const userId = res.locals.userId;
 
         if (privilege === "l1Admin" || privilege === "l2Admin") {
-            try {
-                const ticket = res.locals.ticket;
-                Ticket.updateOne({_id: ticket._id}, req.body)
-                .then( dbData => {
-                    res.json({message: "Ticket updated Successfully"})
-                })
-                
-            } catch {
-                res.status(400).json({message: "Error updating ticket"})
+            if (action === "assign") {
+                try {
+                    Ticket.findById(ticketId)
+                    .select("assignee")
+                    .then( dbData => {
+                        dbData.assignee = new Mongoose.Types.ObjectId(userId);
+                        dbData.save();
+                    })
+
+                    res.json({message: "Ticket successfully assigned"})
+                } catch {
+                    res.status(400).json({message: "Error updating ticket assignee"})
+                }
+            } else if (action === "unassign") {
+                try {
+                    Ticket.findById(ticketId)
+                    .select("assignee")
+                    .then( dbData => {
+                        dbData.assignee = null;
+                        dbData.save();
+                    })
+
+                    res.json({message: "Ticket successfully unassigned"})
+                } catch {
+                    res.status(400).json({message: "Error updating ticket assignee"})
+                }
+            } else if (action === "changeStatus") {
+                try {
+                    Ticket.findById(ticketId)
+                    .select("status")
+                    .then( dbData => {
+                        if (dbData.status === "open") {
+                            dbData.status = "closed";
+                            dbData.save();
+                        } else {
+                            dbData.status = "open";
+                            dbData.save();
+                        }
+                    })
+                    res.json({message: "Ticket status successfully modified"})
+                } catch {
+                    res.status(400).json({message: "Error changing ticket status"})
+                }
             }
         } else {
             res.status(401).json({message:"User not authorized to modify this ticket"})

@@ -1,5 +1,6 @@
 const TicketBucket = require("../models/ticketBucket");
 const { addUserPermissions, acceptUserPermissionRequest, rejectUserPermissionRequest, removeUserPermissions } = require("../utils/manageUserPermission");
+const Mongoose = require("mongoose")
 
 
 // ticketBucker Controller object
@@ -8,6 +9,7 @@ const ticketBucketController = {
     createNewTicketBucket({body}, res) {
         TicketBucket.create(body)
         .then((dbData) => {
+            // Give user that created the bucket l1Admin permissions for the bucket
            if ( addUserPermissions(res.locals.userId, "l1Admin", dbData._id)) {
                 res.json({"message": "Ticket Bucket successfully created"})
            } else {
@@ -21,6 +23,7 @@ const ticketBucketController = {
     getTicketBucketById({params}, res) {
         const privilege = res.locals.privilege;
 
+        // Return ticket bucket with all information for admin
         if (privilege === "l1Admin" || privilege === "l2Admin") {
             TicketBucket.findById(params.id)
             .select(["users", "l1Admin", "l2Admin", "userJoinRequests"])
@@ -32,7 +35,9 @@ const ticketBucketController = {
                 console.error(err)
                 res.sendStatus(400)
             })
-        } else {
+        } 
+        // Return ticket bucket with only name and ID for non admin users
+        else {
             TicketBucket.findById(params.id)
             .then(dbData => {
                 res.json(dbData)
@@ -73,7 +78,7 @@ const ticketBucketController = {
             TicketBucket.findById(ticketBucketId)
             .select("userJoinRequests")
             .then(dbData => {
-                dbData.userJoinRequests.push(userId);
+                dbData.userJoinRequests.push(new Mongoose.Types.ObjectId(userId));
                 dbData.save()
                 res.json({message: "User permission request was successful"})
             })

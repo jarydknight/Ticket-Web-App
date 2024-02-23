@@ -10,6 +10,6 @@ router.route('/')
 router.route('/:id')
 .get(checkOwnership, getTicketById)
 .put(checkOwnership, modifyTicket)
-.delete(checkOwnership, deleteTicketById);
+// .delete(checkOwnership, deleteTicketById);
 
 module.exports = router;
